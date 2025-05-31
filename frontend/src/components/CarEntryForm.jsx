@@ -13,7 +13,6 @@ const CarEntryForm = () => {
     phoneNumber: '',
     slotNumber: '',
     carModel: '',
-    carColor: '',
     notes: ''
   });
   const [errors, setErrors] = useState({});
@@ -87,7 +86,6 @@ const CarEntryForm = () => {
         phoneNumber: formData.phoneNumber,
         slotNumber: formData.slotNumber,
         carModel: formData.carModel || undefined,
-        carColor: formData.carColor || undefined,
         notes: formData.notes || undefined
       });
 
@@ -156,46 +154,19 @@ const CarEntryForm = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="carModel" className="block text-sm font-medium text-gray-700 mb-1">
-                    Car Model
-                  </label>
-                  <input
-                    type="text"
-                    id="carModel"
-                    name="carModel"
-                    value={formData.carModel}
-                    onChange={handleChange}
-                    className="input"
-                    placeholder="e.g., Toyota Corolla"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="carColor" className="block text-sm font-medium text-gray-700 mb-1">
-                    Car Color
-                  </label>
-                  <select
-                    id="carColor"
-                    name="carColor"
-                    value={formData.carColor}
-                    onChange={handleChange}
-                    className="input"
-                  >
-                    <option value="">Select color</option>
-                    <option value="white">White</option>
-                    <option value="black">Black</option>
-                    <option value="silver">Silver</option>
-                    <option value="gray">Gray</option>
-                    <option value="red">Red</option>
-                    <option value="blue">Blue</option>
-                    <option value="green">Green</option>
-                    <option value="yellow">Yellow</option>
-                    <option value="brown">Brown</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
+              <div>
+                <label htmlFor="carModel" className="block text-sm font-medium text-gray-700 mb-1">
+                  Car Model
+                </label>
+                <input
+                  type="text"
+                  id="carModel"
+                  name="carModel"
+                  value={formData.carModel}
+                  onChange={handleChange}
+                  className="input"
+                  placeholder="e.g., Toyota Corolla"
+                />
               </div>
             </div>
           </div>

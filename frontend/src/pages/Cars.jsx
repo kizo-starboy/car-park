@@ -126,15 +126,7 @@ const Cars = () => {
                     <span>{car.phoneNumber}</span>
                   </div>
 
-                  {car.carColor && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <div
-                        className="w-4 h-4 rounded-full mr-2 border border-gray-300"
-                        style={{ backgroundColor: car.carColor.toLowerCase() }}
-                      ></div>
-                      <span className="capitalize">{car.carColor}</span>
-                    </div>
-                  )}
+
 
                   <div className="pt-2 border-t border-gray-200">
                     <p className="text-xs text-gray-500">

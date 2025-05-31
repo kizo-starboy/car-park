@@ -237,6 +237,20 @@ router.put('/:id/exit', auth, async (req, res) => {
     parkingSlot.slotStatus = 'available';
     await parkingSlot.save();
 
+    // Create payment record automatically (cash only)
+    const payment = new Payment({
+      amountPaid: record.totalAmount,
+      parkingRecord: record._id,
+      paymentMethod: 'cash', // Always cash payment
+      status: 'completed'
+    });
+
+    await payment.save();
+
+    // Mark parking record as paid
+    record.isPaid = true;
+    await record.save();
+
     // Populate and return the updated record
     const populatedRecord = await ParkingRecord.findById(record._id)
       .populate('car', 'plateNumber driverName phoneNumber carModel carColor')

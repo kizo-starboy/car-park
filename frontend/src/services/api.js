@@ -81,6 +81,8 @@ export const paymentsAPI = {
   getById: (id) => api.get(`/payments/${id}`),
   create: (data) => api.post('/payments', data),
   update: (id, data) => api.put(`/payments/${id}`, data),
+  delete: (id) => api.delete(`/payments/${id}`),
+  deleteAll: () => api.delete('/payments'),
   getStats: () => api.get('/payments/stats/summary'),
 };
 

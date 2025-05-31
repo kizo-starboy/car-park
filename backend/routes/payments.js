@@ -181,6 +181,58 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
+// @route   DELETE /api/payments/:id
+// @desc    Delete payment
+// @access  Private
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const payment = await Payment.findById(req.params.id);
+    if (!payment) {
+      return res.status(404).json({ message: 'Payment not found' });
+    }
+
+    // Update the related parking record to mark as unpaid
+    if (payment.parkingRecord) {
+      await ParkingRecord.findByIdAndUpdate(
+        payment.parkingRecord,
+        { isPaid: false }
+      );
+    }
+
+    // Delete the payment
+    await Payment.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Payment deleted successfully' });
+  } catch (error) {
+    console.error('Delete payment error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// @route   DELETE /api/payments
+// @desc    Delete all payments
+// @access  Private
+router.delete('/', auth, async (req, res) => {
+  try {
+    // Update all related parking records to mark as unpaid
+    await ParkingRecord.updateMany(
+      { isPaid: true },
+      { isPaid: false }
+    );
+
+    // Delete all payments
+    const result = await Payment.deleteMany({});
+
+    res.json({
+      message: `${result.deletedCount} payment records deleted successfully`,
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    console.error('Delete all payments error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // @route   GET /api/payments/stats/summary
 // @desc    Get payment statistics
 // @access  Private

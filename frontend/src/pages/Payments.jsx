@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CreditCard, Search, Filter, DollarSign, Calendar } from 'lucide-react';
+import { CreditCard, Search, Filter, DollarSign, Calendar, Trash2, AlertTriangle } from 'lucide-react';
 import { paymentsAPI } from '../services/api';
 import { formatDateTime, formatCurrency, getStatusBadgeClass, capitalize } from '../utils/formatters';
 
@@ -51,6 +51,33 @@ const Payments = () => {
     setFilters(prev => ({ ...prev, page }));
   };
 
+  const handleDeletePayment = async (paymentId) => {
+    if (window.confirm('Are you sure you want to delete this payment record? This will mark the related parking record as unpaid.')) {
+      try {
+        await paymentsAPI.delete(paymentId);
+        fetchPayments(); // Refresh the list
+      } catch (error) {
+        console.error('Error deleting payment:', error);
+        alert('Error deleting payment: ' + (error.response?.data?.message || 'Unknown error'));
+      }
+    }
+  };
+
+  const handleDeleteAllPayments = async () => {
+    if (window.confirm('⚠️ WARNING: This will delete ALL payment records and mark all parking records as unpaid. This action cannot be undone. Are you sure?')) {
+      if (window.confirm('This is your final confirmation. Delete ALL payment records?')) {
+        try {
+          const response = await paymentsAPI.deleteAll();
+          alert(response.data.message);
+          fetchPayments(); // Refresh the list
+        } catch (error) {
+          console.error('Error deleting all payments:', error);
+          alert('Error deleting payments: ' + (error.response?.data?.message || 'Unknown error'));
+        }
+      }
+    }
+  };
+
   const getPaymentMethodIcon = (method) => {
     switch (method) {
       case 'cash':
@@ -71,8 +98,17 @@ const Payments = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
             <p className="mt-1 text-sm text-gray-500">
-              View payment history and transactions (View Only - Payments are created through parking records)
+              Manage payment history and transactions
             </p>
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={handleDeleteAllPayments}
+              className="btn-danger flex items-center"
+            >
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Delete All Payments
+            </button>
           </div>
         </div>
 
@@ -98,8 +134,6 @@ const Payments = () => {
             >
               <option value="">All Methods</option>
               <option value="cash">Cash</option>
-              <option value="mobile_money">Mobile Money</option>
-              <option value="card">Card</option>
             </select>
           </div>
         </div>
@@ -139,6 +173,9 @@ const Payments = () => {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -189,6 +226,15 @@ const Payments = () => {
                         <span className={`badge ${getStatusBadgeClass(payment.status)}`}>
                           {capitalize(payment.status)}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleDeletePayment(payment._id)}
+                          className="text-danger-600 hover:text-danger-900 flex items-center"
+                          title="Delete payment"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}

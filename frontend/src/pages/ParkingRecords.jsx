@@ -8,6 +8,7 @@ import CarEntryForm from '../components/CarEntryForm';
 const ParkingRecordsList = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [filters, setFilters] = useState({
     status: '',
     search: '',
@@ -255,6 +256,7 @@ const ParkingRecordsList = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };
