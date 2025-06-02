@@ -98,16 +98,7 @@ const EditParkingRecordForm = () => {
 
       await carsAPI.update(record.car._id, carUpdateData);
 
-      // Handle parking slot change if needed
-      if (formData.parkingSlotId !== record.parkingSlot._id) {
-        // Free up the old slot
-        await parkingSlotsAPI.update(record.parkingSlot._id, { slotStatus: 'available' });
-
-        // Occupy the new slot
-        await parkingSlotsAPI.update(formData.parkingSlotId, { slotStatus: 'occupied' });
-      }
-
-      // Then update parking record
+      // Update parking record (backend will handle slot changes automatically)
       const recordUpdateData = {
         entryTime: formData.entryTime,
         exitTime: formData.exitTime || null,

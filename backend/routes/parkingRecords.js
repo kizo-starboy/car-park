@@ -268,14 +268,44 @@ router.put('/:id/exit', auth, async (req, res) => {
 // @access  Private
 router.put('/:id', auth, async (req, res) => {
   try {
-    const { entryTime, exitTime, notes } = req.body;
+    const { entryTime, exitTime, notes, parkingSlot } = req.body;
 
-    const record = await ParkingRecord.findById(req.params.id);
+    const record = await ParkingRecord.findById(req.params.id)
+      .populate('parkingSlot');
     if (!record) {
       return res.status(404).json({ message: 'Parking record not found' });
     }
 
-    // Update fields
+    // Handle parking slot change if provided
+    if (parkingSlot && parkingSlot !== record.parkingSlot._id.toString()) {
+      // Validate new parking slot
+      const newSlot = await ParkingSlot.findById(parkingSlot);
+      if (!newSlot || !newSlot.isActive) {
+        return res.status(404).json({ message: 'New parking slot not found' });
+      }
+
+      if (newSlot.slotStatus !== 'available') {
+        return res.status(400).json({ message: 'New parking slot is not available' });
+      }
+
+      // Free up the old slot (only if record is still active)
+      if (record.status === 'active') {
+        const oldSlot = await ParkingSlot.findById(record.parkingSlot._id);
+        if (oldSlot) {
+          oldSlot.slotStatus = 'available';
+          await oldSlot.save();
+        }
+
+        // Occupy the new slot
+        newSlot.slotStatus = 'occupied';
+        await newSlot.save();
+      }
+
+      // Update the parking slot reference
+      record.parkingSlot = parkingSlot;
+    }
+
+    // Update other fields
     if (entryTime) record.entryTime = new Date(entryTime);
     if (exitTime !== undefined) {
       record.exitTime = exitTime ? new Date(exitTime) : null;
