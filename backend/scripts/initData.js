@@ -6,7 +6,7 @@ require('dotenv').config();
 const initializeData = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/smartpark');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/PSSMS');
     console.log('Connected to MongoDB');
 
     // Create admin user if it doesn't exist
