@@ -80,8 +80,35 @@ router.get('/plate/:plateNumber', auth, async (req, res) => {
   }
 });
 
+// @route   PUT /api/cars/:id
+// @desc    Update car details
+// @access  Private
+router.put('/:id', auth, async (req, res) => {
+  try {
+    const { driverName, phoneNumber, carModel, carColor } = req.body;
+
+    const car = await Car.findById(req.params.id);
+    if (!car || !car.isActive) {
+      return res.status(404).json({ message: 'Car not found' });
+    }
+
+    // Update car details
+    if (driverName) car.driverName = driverName;
+    if (phoneNumber) car.phoneNumber = phoneNumber;
+    if (carModel) car.carModel = carModel;
+    if (carColor) car.carColor = carColor;
+
+    await car.save();
+
+    res.json(car);
+  } catch (error) {
+    console.error('Update car error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Note: Cars are created automatically through parking records
-// No direct CREATE, UPDATE, or DELETE operations allowed on cars
-// Cars are view-only and managed through the parking records system
+// UPDATE operations are allowed for editing car details
+// Cars are managed through the parking records system
 
 module.exports = router;

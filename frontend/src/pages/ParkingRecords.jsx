@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { Plus, Search, Filter, Car, Clock, DollarSign } from 'lucide-react';
+import { Plus, Search, Filter, Car, Clock, DollarSign, Edit } from 'lucide-react';
 import { parkingRecordsAPI } from '../services/api';
 import { formatDateTime, formatDuration, formatCurrency, getStatusBadgeClass } from '../utils/formatters';
 import CarEntryForm from '../components/CarEntryForm';
+import EditParkingRecordForm from '../components/EditParkingRecordForm';
 
 const ParkingRecordsList = () => {
   const [records, setRecords] = useState([]);
@@ -199,27 +200,34 @@ const ParkingRecordsList = () => {
                           {record.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        {record.status === 'active' && (
-                          <button
-                            onClick={() => handleProcessExit(record._id)}
-                            className="text-warning-600 hover:text-warning-900"
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center space-x-2">
+                          {record.status === 'active' && (
+                            <button
+                              onClick={() => handleProcessExit(record._id)}
+                              className="inline-flex items-center px-2 py-1 text-xs font-medium text-warning-700 bg-warning-100 rounded hover:bg-warning-200 transition-colors"
+                              title="Process Exit"
+                            >
+                              <Clock className="h-3 w-3 mr-1" />
+                              Exit
+                            </button>
+                          )}
+                          <Link
+                            to={`/parking-records/${record._id}/edit`}
+                            className="inline-flex items-center px-2 py-1 text-xs font-medium text-primary-700 bg-primary-100 rounded hover:bg-primary-200 transition-colors"
+                            title="Edit Record"
                           >
-                            Process Exit
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(record._id)}
+                            className="inline-flex items-center px-2 py-1 text-xs font-medium text-danger-700 bg-danger-100 rounded hover:bg-danger-200 transition-colors"
+                            title="Delete Record"
+                          >
+                            Delete
                           </button>
-                        )}
-                        <Link
-                          to={`/parking-records/${record._id}/edit`}
-                          className="text-primary-600 hover:text-primary-900"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(record._id)}
-                          className="text-danger-600 hover:text-danger-900"
-                        >
-                          Delete
-                        </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -264,12 +272,7 @@ const ParkingRecordsList = () => {
 // Use the CarEntryForm component
 const NewParkingRecord = () => <CarEntryForm />;
 
-const EditParkingRecord = () => (
-  <div className="p-6">
-    <h1 className="text-2xl font-bold text-gray-900 mb-4">Edit Parking Record</h1>
-    <p className="text-gray-500">Edit form will be implemented here.</p>
-  </div>
-);
+const EditParkingRecord = () => <EditParkingRecordForm />;
 
 const ParkingRecords = () => {
   return (
