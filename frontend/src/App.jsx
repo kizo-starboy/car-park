@@ -9,6 +9,7 @@ import ParkingSlots from './pages/ParkingSlots';
 import Cars from './pages/Cars';
 import Payments from './pages/Payments';
 import Reports from './pages/Reports';
+import NotFound from './pages/NotFound';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -84,7 +85,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
